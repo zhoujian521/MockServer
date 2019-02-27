@@ -6,10 +6,24 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/std/index');
-var users = require('./routes/std/users');
 var customerRouter = require('./routes/std/customer'); 
 
+// pkt.red 
+var home = require('./routes/pkt/home'); 
+var users = require('./routes/pkt/users'); 
+var game = require('./routes/pkt/game');
+
 var app = express();
+
+// app.options('*', cors());
+app.all('*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  res.header("X-Powered-By",' 3.2.1')
+  if(req.method=="OPTIONS") res.send(200);/*让options请求快速返回*/
+  else  next();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,6 +39,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/api/customer', customerRouter);
+
+// pkt.red 
+app.use('/api/home', home);
+app.use('/api/users', users);
+app.use('/api/game', game);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
